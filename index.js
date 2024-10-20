@@ -101,40 +101,39 @@ io.on("connection", function(socket) {
     stockfish.stdin.write(`position fen ${fen}\n`);
     stockfish.stdin.write(`go depth ${DEPTH}\n`);
   });
+});
 
-  stockfish.stdout.on("data", (data) => {
-    let output = data.toString();
-    if (output.startsWith("info depth " + DEPTH)) {
-      let filter = output.split(" ");
-      moveValue = filter[filter.indexOf("cp") + 1];
-      if (parseInt(moveValue) >= 0) {
-        moveValue = "+" + (moveValue / 100);
-      }
-      else {
-        moveValue = moveValue / 100;
-      }
-      if (filter.includes("mate")) {
-        mate = filter[filter.indexOf("mate") + 1];
+stockfish.stdout.on("data", (data) => {
+  let output = data.toString();
+  if (output.startsWith("info depth " + DEPTH)) {
+    let filter = output.split(" ");
+    moveValue = filter[filter.indexOf("cp") + 1];
+    if (parseInt(moveValue) >= 0) {
+      moveValue = "+" + (moveValue / 100);
+    }
+    else {
+      moveValue = moveValue / 100;
+    }
+    if (filter.includes("mate")) {
+      mate = filter[filter.indexOf("mate") + 1];
+    }
+  }
+  if (output.includes("bestmove")) {
+    let filter = output.substring(output.indexOf("bestmove"));
+    nextMove = filter.split(" ")[1];
+    stockfish.stdin.write(`position fen ${fen} moves ${nextMove}\n`);
+    stockfish.stdin.write("d\n");
+  }
+  if (output.includes("Fen:")) {
+    let filter = output.split(" ");
+    for (let i = 0; i < filter.length; i++) {
+      if (filter[i].includes("Fen:")) {
+        result = filter[i + 1];
       }
     }
-    if (output.includes("bestmove")) {
-      let filter = output.substring(output.indexOf("bestmove"));
-      nextMove = filter.split(" ")[1];
-      stockfish.stdin.write(`position fen ${fen} moves ${nextMove}\n`);
-      stockfish.stdin.write("d\n");
-    }
-    if (output.includes("Fen:")) {
-      let filter = output.split(" ");
-      for (let i = 0; i < filter.length; i++) {
-        if (filter[i].includes("Fen:")) {
-          result = filter[i + 1];
-        }
-      }
-      socket.emit("result", result, (Date.now() - time) / 1000, nextMove, moveValue, mate);
-      inProgress = false;
-    }
-  });
-
+    io.emit("result", result, (Date.now() - time) / 1000, nextMove, moveValue, mate);
+    inProgress = false;
+  }
 });
 
 http.listen(PORT, function() {
