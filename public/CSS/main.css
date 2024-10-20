@@ -1,0 +1,123 @@
+html {
+  font-family: Helvetica, Arial, sans-serif;
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+  width: 100vw;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 90vh;
+  background-color: #dddddd;
+  font-weight: bold;
+}
+
+a {
+  color: #ffffff;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.75);
+}
+
+#board {
+  background-color: #eeeeee;
+  width: 500px;
+  padding: 25px 75px 25px 75px;
+  border-radius: 25px;
+}
+
+#fen {
+  width: 400px;
+  padding: 10px;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+#fen:-moz-focusring {
+  outline: none;
+}
+
+#applyfen {
+  background-color: #dfdfdf;
+  border: 3px #ffffff solid;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: all 0.25s;
+}
+
+#applyfen:hover {
+  background-color: #ffffff;
+  border: 3px #eeeeee solid;
+}
+
+#solve {
+  background-color: #dfdfdf;
+  border: 3px #ffffff solid;
+}
+
+#solve:hover {
+  background-color: #ffffff;
+  border: 3px #eeeeee solid;
+}
+
+#turn {
+  border-radius: 20px;
+  border: none;
+  padding: 30px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+#turn:hover {
+  padding: 30px 60px;
+}
+
+.button {
+  background-color: #eeeeee;
+  color: #333333;
+  border-radius: 20px;
+  border: none;
+  padding: 20px 40px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.button:hover {
+  background-color: #ffffff;
+}
+
+.black {
+  background-color: #000000;
+}
+
+.white {
+  background-color: #ffffff;
+}
+
+.wrapper {
+  text-align: center;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  transition: all 1s;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888888;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555555;
+}

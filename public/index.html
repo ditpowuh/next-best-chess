@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Next Best Chess Move</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="chessboard-1.0.0.min.css">
+    <link rel="stylesheet" type="text/css" href="/CSS/main.css">
+    <link id="favicon" rel="icon" type="image/x-icon" href="/Images/wK.png">
+  </head>
+  <body>
+    <div class="wrapper">
+      <h4><span id="status">Ready!</span><a id="move" href="#replay"></a></h4>
+      <div id="board"></div>
+      <br>
+      <button id="reset" class="button">Reset</button>
+      <button id="flip" class="button">Flip</button>
+      <button id="clear" class="button">Clear</button>
+      <button id="solve" class="button">Solve</button>
+      <br><br>
+      <button id="turn" class="white"></button>
+      <br><br>
+      <input id="fen" type="text" placeholder="FEN">
+      <button id="applyfen">Apply</button>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/JS/jquery.3.7.1.min.js"></script>
+    <script src="/chessboard-1.0.0.min.js"></script>
+    <script src="/JS/main.js"></script>
+  </body>
+</html>
