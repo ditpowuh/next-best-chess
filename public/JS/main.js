@@ -21,9 +21,9 @@ function toggleTurn(force) {
       $("#turn").removeClass("black").addClass("white");
       turn = "w";
     }
+    $("#fen").val(board.fen() + " " + turn + " - - 0 1");
   }
   $("#favicon").attr("href", "/Images/" + turn + "K.png");
-  $("#fen").val(board.fen() + " " + turn + " - - 0 1");
 }
 
 function updateBoard(oldPosition, newPosition) {
@@ -47,15 +47,25 @@ const board = Chessboard("board", {
   sparePieces: true,
   onChange: updateBoard
 });
-$("#fen").val(board.fen() + " " + turn + " - - 0 1")
+$("#board .chessboard-63f37 div").css("padding-left", "0");
+$("#fen").val(board.fen() + " " + turn + " - - 0 1");
 
 socket.on("connect", () => {
-  socket.on("result", function(fenData, time, nextMove) {
+  socket.on("result", function(fenData, time, nextMove, cp, mate) {
     $("#status").html(`Solved in ${time} seconds!` + " ");
     $("#move").html(nextMove);
+    if (cp !== null) {
+      $("#value").html("(" + cp + ")");
+    }
+    if (mate != 0) {
+      $("#mate").html(" " + `[Mate in ${mate}]`);
+    }
     board.position(fenData);
   });
   socket.on("problem", function(data) {
+    $("#move").html("");
+    $("#value").html("");
+    $("#mate").html("");
     $("#status").html(data);
   })
 
@@ -74,15 +84,17 @@ socket.on("connect", () => {
   $("#solve").on("click", function() {
     previousFen = board.fen() + " " + turn + " - - 0 1";
     $("#move").html("");
+    $("#value").html("");
+    $("#mate").html("");
     $("#status").html("Solving...");
     socket.emit("solve", previousFen);
   });
   $("#applyfen").on("click", function() {
-    board.position($("#fen").val());
     let updatedTurn = $("#fen").val().split(" ")[1];
     if (updatedTurn !== undefined) {
       toggleTurn(updatedTurn);
     }
+    board.position($("#fen").val());
   });
 });
 

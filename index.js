@@ -20,6 +20,8 @@ const ramUsage = process.env.RAM || Math.round(os.totalmem() / Math.pow(1024, 2)
 
 let fen;
 let nextMove;
+let moveValue;
+let mate;
 let result;
 
 let time = 0;
@@ -30,11 +32,12 @@ process.on("uncaughtException", function(exception) {
   console.log(exception);
 });
 
-function checkChess(fen) {
+function checkChess(fenData) {
   const board = new chess.Chess();
 
   try {
-    let fenSplit = fen.split(" ");
+    let fenSplit = fenData.split(" ");
+    let originalTurn = fenSplit[1];
     fenSplit[1] = "w";
     board.load(fenSplit.join(" "));
     if (board.isCheckmate()) {
@@ -42,6 +45,11 @@ function checkChess(fen) {
     }
     else if (board.isStalemate()) {
       return {"valid": false, "message": "Stalemate"};
+    }
+    else if (board.inCheck()) {
+      if (originalTurn == "b") {
+        return {"valid": false, "message": "White Is In Check"};
+      }
     }
     fenSplit[1] = "b";
     board.load(fenSplit.join(" "));
@@ -51,9 +59,14 @@ function checkChess(fen) {
     else if (board.isStalemate()) {
       return {"valid": false, "message": "Stalemate"};
     }
+    else if (board.inCheck()) {
+      if (originalTurn == "w") {
+        return {"valid": false, "message": "Black Is In Check"};
+      }
+    }
   }
   catch (e) {
-    return {"valid": false, "message": "Invalid"}; 
+    return {"valid": false, "message": "Invalid"};
   }
   return {"valid": true, "message": null};
 }
@@ -69,7 +82,7 @@ app.get("*", function(request, response) {
 
 stockfish.stdin.write(`setoption name Threads value ${cpuUsage}\n`);
 stockfish.stdin.write(`setoption name Hash value ${ramUsage}\n`);
-
+stockfish.stdin.write(`setoption name UCI_ShowWDL value true\n`);
 
 io.on("connection", function(socket) {
   socket.on("solve", function(fenData) {
@@ -82,6 +95,7 @@ io.on("connection", function(socket) {
       return;
     }
     fen = fenData;
+    mate = 0;
     time = Date.now();
     inProgress = true;
     stockfish.stdin.write(`position fen ${fen}\n`);
@@ -90,6 +104,19 @@ io.on("connection", function(socket) {
 
   stockfish.stdout.on("data", (data) => {
     let output = data.toString();
+    if (output.startsWith("info depth " + DEPTH)) {
+      let filter = output.split(" ");
+      moveValue = filter[filter.indexOf("cp") + 1];
+      if (parseInt(moveValue) >= 0) {
+        moveValue = "+" + (moveValue / 100);
+      }
+      else {
+        moveValue = moveValue / 100;
+      }
+      if (filter.includes("mate")) {
+        mate = filter[filter.indexOf("mate") + 1];
+      }
+    }
     if (output.includes("bestmove")) {
       let filter = output.substring(output.indexOf("bestmove"));
       nextMove = filter.split(" ")[1];
@@ -103,7 +130,7 @@ io.on("connection", function(socket) {
           result = filter[i + 1];
         }
       }
-      socket.emit("result", result, (Date.now() - time) / 1000, nextMove);
+      socket.emit("result", result, (Date.now() - time) / 1000, nextMove, moveValue, mate);
       inProgress = false;
     }
   });
@@ -117,4 +144,8 @@ http.listen(PORT, function() {
   console.log("RAM - " + ramUsage + " MB");
   console.log("\nStockfish Loaded Settings:");
   console.log("Depth - " + DEPTH);
+});
+
+process.on("exit", function() {
+  stockfish.kill();
 });

@@ -22,6 +22,10 @@ a {
   text-shadow: 0 0 6px rgba(0, 0, 0, 0.75);
 }
 
+#content {
+  animation: fadein 1s ease-out;
+}
+
 #board {
   background-color: #eeeeee;
   width: 500px;
@@ -77,6 +81,15 @@ a {
 
 #turn:hover {
   padding: 30px 60px;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .button {
