@@ -1,5 +1,6 @@
 const socket = io();
 var previousFen = "";
+var lastMove = "";
 var turn = "w";
 
 function toggleTurn(force) {
@@ -31,12 +32,11 @@ function updateBoard(oldPosition, newPosition) {
 }
 
 function showAgain() {
-  if (previousFen == "") {
+  if (previousFen == "" || lastMove == "") {
     return;
   }
-  let currentFen = board.fen();
   board.position(previousFen, false);
-  board.position(currentFen);
+  board.position(lastMove);
 }
 
 const board = Chessboard("board", {
@@ -51,15 +51,16 @@ $("#board .chessboard-63f37 div").css("padding-left", "0");
 $("#fen").val(board.fen() + " " + turn + " - - 0 1");
 
 socket.on("connect", () => {
-  socket.on("result", function(fenData, time, nextMove, cp, mate) {
+  socket.on("result", function(fenData, time, nextMove, evalValue, mate) {
     $("#status").html(`Solved in ${time} seconds!` + " ");
     $("#move").html(nextMove);
-    if (cp !== null) {
-      $("#value").html("(" + cp + ")");
+    if (evalValue !== null) {
+      $("#value").html("(" + evalValue + ")");
     }
     if (mate != 0) {
       $("#mate").html(" " + `[Mate in ${mate}]`);
     }
+    lastMove = fenData;
     board.position(fenData);
   });
   socket.on("problem", function(data) {

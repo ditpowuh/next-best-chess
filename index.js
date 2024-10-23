@@ -20,7 +20,7 @@ const ramUsage = process.env.RAM || Math.round(os.totalmem() / Math.pow(1024, 2)
 
 let fen;
 let nextMove;
-let moveValue;
+let evalValue;
 let mate;
 let result;
 
@@ -107,12 +107,12 @@ stockfish.stdout.on("data", (data) => {
   let output = data.toString();
   if (output.startsWith("info depth " + DEPTH)) {
     let filter = output.split(" ");
-    moveValue = filter[filter.indexOf("cp") + 1];
-    if (parseInt(moveValue) >= 0) {
-      moveValue = "+" + (moveValue / 100);
+    evalValue = filter[filter.indexOf("cp") + 1];
+    if (parseInt(evalValue) >= 0) {
+      evalValue = "+" + (evalValue / 100);
     }
     else {
-      moveValue = moveValue / 100;
+      evalValue = evalValue / 100;
     }
     if (filter.includes("mate")) {
       mate = filter[filter.indexOf("mate") + 1];
@@ -131,7 +131,7 @@ stockfish.stdout.on("data", (data) => {
         result = filter[i + 1];
       }
     }
-    io.emit("result", result, (Date.now() - time) / 1000, nextMove, moveValue, mate);
+    io.emit("result", result, (Date.now() - time) / 1000, nextMove, evalValue, mate);
     inProgress = false;
   }
 });
