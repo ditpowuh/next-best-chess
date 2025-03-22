@@ -1,12 +1,21 @@
-require("dotenv").config();
-const os = require("os");
-const express = require("express");
-const app = express();
-const http = require("http").Server(app);
-const io = require("socket.io")(http);
+import "dotenv/config";
+import os from "os";
+import express from "express";
+import http from "http";
+import path from "path";
+import {Server} from "socket.io";
+import {fileURLToPath} from "url";
 
-const chess = require("chess.js");
-const processes = require("child_process");
+import processes from "child_process";
+import {Chess} from "chess.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+
+const server = http.Server(app);
+const io = new Server(server);
 
 // Change here or change accordingly in .env file
 const PORT = process.env.PORT || 3000;
@@ -17,6 +26,9 @@ const stockfish = processes.spawn("stockfish");
 // Set CPU and RAM usage in .env file or it will default to the following
 const cpuUsage = process.env.CPU || (os.cpus().length > 2 ? os.cpus().length - 2 : 1);
 const ramUsage = process.env.RAM || Math.round(os.totalmem() / Math.pow(1024, 2) / 4);
+
+// Change to enable or disable spacebar shortcut or use .env
+const shortcutEnabled = process.env.SHORTCUT || false;
 
 let fen;
 let nextMove;
@@ -33,7 +45,7 @@ process.on("uncaughtException", function(exception) {
 });
 
 function checkChess(fenData) {
-  const board = new chess.Chess();
+  const board = new Chess();
 
   try {
     let fenSplit = fenData.split(" ");
@@ -85,6 +97,7 @@ stockfish.stdin.write(`setoption name Hash value ${ramUsage}\n`);
 stockfish.stdin.write(`setoption name UCI_ShowWDL value true\n`);
 
 io.on("connection", function(socket) {
+  socket.emit("shortcut", shortcutEnabled);
   socket.on("solve", function(fenData) {
     if (inProgress) {
       return;
@@ -136,13 +149,14 @@ stockfish.stdout.on("data", (data) => {
   }
 });
 
-http.listen(PORT, function() {
+server.listen(PORT, function() {
   console.log(`Listening at specified port...\nGo to http://localhost:${PORT} to use the app.`);
   console.log("\nResources To Be Used For Stockfish:");
   console.log("CPU - " + cpuUsage + " cores");
   console.log("RAM - " + ramUsage + " MB");
   console.log("\nStockfish Loaded Settings:");
   console.log("Depth - " + DEPTH);
+  console.log("\nReady!");
 });
 
 process.on("exit", function() {
