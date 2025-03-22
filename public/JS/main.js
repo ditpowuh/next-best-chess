@@ -1,7 +1,10 @@
 const socket = io();
+
 var previousFen = "";
 var lastMove = "";
 var turn = "w";
+
+var shortcutEnabled = false;
 
 function toggleTurn(force) {
   if (force !== undefined) {
@@ -69,6 +72,9 @@ socket.on("connect", () => {
     $("#mate").html("");
     $("#status").html(data);
   })
+  socket.on("shortcut", function(value) {
+    shortcutEnabled = value;
+  });
 
   $("#reset").on("click", function() {
     board.start();
@@ -104,3 +110,16 @@ $("#move").on("click", function(event) {
   showAgain();
 });
 
+document.onkeyup = function(event) {
+  if (!shortcutEnabled) {
+    return;
+  }
+  if (event.key == " ") {
+    previousFen = board.fen() + " " + turn + " - - 0 1";
+    $("#move").html("");
+    $("#value").html("");
+    $("#mate").html("");
+    $("#status").html("Solving...");
+    socket.emit("solve", previousFen);
+  }
+};
