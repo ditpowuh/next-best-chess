@@ -12,7 +12,7 @@
     "@chrisoakman/chessboardjs": "^1.0.0",
     "chess.js": "^1.1.0",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2",
+    "express": "^4.22.1",
     "socket.io": "^4.8.1"
   }
 }
