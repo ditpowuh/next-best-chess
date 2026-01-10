@@ -3,6 +3,7 @@ import os from "os";
 import express from "express";
 import http from "http";
 import path from "path";
+import chalk from "chalk";
 import {Server} from "socket.io";
 import {fileURLToPath} from "url";
 
@@ -150,12 +151,12 @@ stockfish.stdout.on("data", (data) => {
 });
 
 server.listen(PORT, function() {
-  console.log(`Listening at specified port...\nGo to http://localhost:${PORT} to use the app.`);
-  console.log("\nResources To Be Used For Stockfish:");
-  console.log("CPU - " + cpuUsage + " cores");
-  console.log("RAM - " + ramUsage + " MB");
-  console.log("\nStockfish Loaded Settings:");
-  console.log("Depth - " + DEPTH);
+  console.log(`Listening at specified port...\nGo to ${chalk.cyanBright(`http://localhost:${PORT}`)} to use the app.`);
+  console.log(`\n${chalk.yellow("Resources To Be Used For Stockfish:")}`);
+  console.log(`${chalk.green("CPU")} - ${cpuUsage} cores`);
+  console.log(`${chalk.green("RAM")} - ${ramUsage} MB`);
+  console.log(`\n${chalk.yellow("Stockfish Loaded Settings:")}`);
+  console.log(`${chalk.green("Depth")} - ${DEPTH}`);
   console.log("\nReady!");
 });
 
