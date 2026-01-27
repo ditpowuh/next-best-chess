@@ -1,27 +1,27 @@
 const socket = io();
 
-var previousFen = "";
-var lastMove = "";
-var turn = "w";
+let previousFen = "";
+let lastMove = "";
+let turn = "w";
 
-var shortcutEnabled = false;
+let shortcutEnabled = false;
 
 function toggleTurn(force) {
   if (force !== undefined) {
     turn = force;
-    if (turn == "w") {
+    if (turn === "w") {
       $("#turn").removeClass("black").addClass("white");
     }
-    else if (turn == "b") {
+    else if (turn === "b") {
       $("#turn").removeClass("white").addClass("black");
     }
   }
   else {
-    if (turn == "w") {
+    if (turn === "w") {
       $("#turn").removeClass("white").addClass("black");
       turn = "b";
     }
-    else if (turn == "b") {
+    else if (turn === "b") {
       $("#turn").removeClass("black").addClass("white");
       turn = "w";
     }
@@ -35,7 +35,7 @@ function updateBoard(oldPosition, newPosition) {
 }
 
 function showAgain() {
-  if (previousFen == "" || lastMove == "") {
+  if (previousFen === "" || lastMove === "") {
     return;
   }
   board.position(previousFen, false);
@@ -114,7 +114,7 @@ document.onkeyup = function(event) {
   if (!shortcutEnabled) {
     return;
   }
-  if (event.key == " ") {
+  if (event.key === " ") {
     previousFen = board.fen() + " " + turn + " - - 0 1";
     $("#move").html("");
     $("#value").html("");

@@ -39,7 +39,7 @@ let result;
 
 let time = 0;
 
-var inProgress = false;
+let inProgress = false;
 
 process.on("uncaughtException", function(exception) {
   console.log(exception);
@@ -60,7 +60,7 @@ function checkChess(fenData) {
       return {"valid": false, "message": "Stalemate"};
     }
     else if (board.inCheck()) {
-      if (originalTurn == "b") {
+      if (originalTurn === "b") {
         return {"valid": false, "message": "White Is In Check"};
       }
     }
@@ -73,7 +73,7 @@ function checkChess(fenData) {
       return {"valid": false, "message": "Stalemate"};
     }
     else if (board.inCheck()) {
-      if (originalTurn == "w") {
+      if (originalTurn === "w") {
         return {"valid": false, "message": "Black Is In Check"};
       }
     }
