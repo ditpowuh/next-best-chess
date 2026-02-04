@@ -110,7 +110,7 @@ $("#move").on("click", function(event) {
   showAgain();
 });
 
-document.onkeyup = function(event) {
+$(document).keyup(function (event) {
   if (!shortcutEnabled) {
     return;
   }
@@ -122,4 +122,4 @@ document.onkeyup = function(event) {
     $("#status").html("Solving...");
     socket.emit("solve", previousFen);
   }
-};
+});

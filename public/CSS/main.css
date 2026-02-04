@@ -24,6 +24,7 @@ a {
 
 #content {
   animation: fadein 1s ease-out;
+  transform: scale(calc(100vh / 70em));
 }
 
 #board {
