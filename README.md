@@ -6,6 +6,9 @@ Note that this application won't find the best of the best moves for Chess, but 
 
 **Designed to be run locally, without requiring an internet connection!**
 
+##### Why jQuery?
+This project utilises a dependency that requires jQuery (`@chrisoakman/chessboardjs`), so it is used throughout for consistency, development speed, and to avoid mixing jQuery and native DOM APIs.
+
 ### Instructions
 1. Install necessary Node.JS packages via `npm install`.
 2. Head to the [Stockfish website](https://stockfishchess.org/) and download the Stockfish engine.
