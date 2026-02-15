@@ -89,8 +89,8 @@ app.use(express.static("public", {
 }));
 app.use(express.static("node_modules/@chrisoakman/chessboardjs/dist"));
 
-app.get("*", function(request, response) {
-  response.sendFile(__dirname + "/public/404.html");
+app.use((request, response) => {
+  response.status(404).sendFile(__dirname + "/public/404.html");
 });
 
 stockfish.stdin.write(`setoption name Threads value ${cpuUsage}\n`);
