@@ -17,6 +17,7 @@ This project utilises a dependency that requires jQuery (`@chrisoakman/chessboar
 5. Run the app (via `npm start`).
 
 ### Tested Versions of Stockfish
+- Stockfish 19
 - Stockfish 18
 - Stockfish 17
 
